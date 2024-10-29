@@ -1,4 +1,4 @@
-const { createSlice } = require("@reduxjs/toolkit");
+import { createSlice } from "@reduxjs/toolkit"
 
 
 const initialState = {
@@ -13,7 +13,8 @@ const authSlice = createSlice({
     initialState,
     reducers:{
         SetUser:(state,action)=>{
-
+            state.user = action.payload;
+            state.isAuthenticated = true;
         }
     }
 })
