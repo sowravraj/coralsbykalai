@@ -1,7 +1,10 @@
 import Commonform from '@/components/common/form'
 import { loginformcontrols } from '@/config'
+import { useToast } from '@/hooks/use-toast'
+import { loginUser } from '@/store/auth-slice'
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
 
 const initialState ={
   email : "",
@@ -10,10 +13,29 @@ const initialState ={
 
 const AuthLogin = () => {
 
-
+  
   const [formData, setFormData] = useState(initialState)
 
-  const onSubmit = ()=>{
+  const dispatch = useDispatch()
+  const {toast} = useToast()
+  const navigate = useNavigate()
+
+  const onSubmit = (event)=>{
+      event.preventDefault()
+
+      dispatch(loginUser(formData)).then((data)=>{
+        if (data?.payload?.success) {
+          toast({
+            title: "Login Success",
+            description: "Welcome back!",
+          });
+          navigate("/shop/home");
+        } else {
+          toast({
+            title: data?.payload?.message,
+          });
+        }
+          })
 
   }
 
@@ -21,8 +43,8 @@ const AuthLogin = () => {
     <div className='mx-auto w-full max-w-md space-y-6'>
     <div className='text-center'>
       <h1 className='text-3xl font-bold tracking-tight text-foreground'>Synchronize with Your Universe</h1>
-      <p className='mt-2'>Don't have an Account?
-        <Link to="/auth/register" className='font-medium hover:underline text-primary ml-2'>Register</Link>
+      <p className='mt-2'>New Here?
+        <Link to="/auth/register" className='font-medium hover:underline text-primary ml-2'>Create Your Space</Link>
       </p>
     </div>
     <Commonform

@@ -91,8 +91,14 @@ const Commonform = ({formControls,formData, setFormData, onSubmit,buttonText}) =
                 </div>)
             }
         </div>
-        <Button type="submit" className="mt-2 w-full bg-black rounded"><p className='text-white'>{buttonText}</p></Button>
-    </form>
+        <Button 
+            type="submit" 
+            className="mt-6 w-full bg-black rounded transition-all duration-300 ease-in-out transform group hover:bg-black hover:scale-105 hover:shadow-lg"
+        >
+            <p className="text-white ">{buttonText}</p>
+        </Button>
+ 
+  </form>
   )
 }
 

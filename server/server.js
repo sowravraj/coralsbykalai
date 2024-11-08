@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const authRouter = require("./routes/auth/auth-route")
 
 dotenv.config(); // Load environment variables
 
@@ -21,7 +22,7 @@ mongoose.connect("mongodb+srv://sowravraj:NFMSplGXZCkmHRG3@cluster0.w4c8m.mongod
 app.use(express.json()); // Enable parsing of JSON requests
 app.use(cookieParser())
 app.use(cors({
-    origin:"http://localhost:5173/",
+    origin:"http://localhost:5173",
     methods:["GET","POST","PUT","DELETE"],
     allowedHeaders: [
         "Content-Type",
@@ -35,6 +36,8 @@ app.use(cors({
 
 const PORT = process.env.PORT || 3000;
 
+
+app.use("/api/auth",authRouter)
 
 
 app.listen(PORT, () => {
