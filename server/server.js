@@ -36,6 +36,13 @@ app.use(cors({
 
 const PORT = process.env.PORT || 3000;
 
+// Log incoming requests for debugging
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+app.options('*', cors()); // Handle preflight requests for all routes
+
 
 app.use("/api/auth",authRouter)
 

@@ -29,10 +29,11 @@ const AuthLogin = () => {
             title: "Login Success",
             description: "Welcome back!",
           });
-          navigate("/shop/home");
+          // navigate("/shop/home");
         } else {
           toast({
             title: data?.payload?.message,
+            variant: "destructive", 
           });
         }
           })
