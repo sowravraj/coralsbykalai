@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/auth/auth-route")
+const adminProductsRouter = require("./routes/admin/admin-route")
 
 dotenv.config(); // Load environment variables
 
@@ -45,6 +46,7 @@ app.options('*', cors()); // Handle preflight requests for all routes
 
 
 app.use("/api/auth",authRouter)
+app.use("/api/admin/products",adminProductsRouter)
 
 
 app.listen(PORT, () => {

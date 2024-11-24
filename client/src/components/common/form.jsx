@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Textarea } from '../ui/textarea'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import "../../App.css"
 
 const Commonform = ({formControls,formData, setFormData, onSubmit,buttonText}) => {
 
@@ -30,10 +31,10 @@ const Commonform = ({formControls,formData, setFormData, onSubmit,buttonText}) =
                         ...formData,
                         [getControlItems.name] : value
                     }))} value={value}>
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder={getControlItems.placeholder}></SelectValue>
+                        <SelectTrigger className="mb-4 w-full">
+                            <SelectValue placeholder={getControlItems.label}></SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="absolute z-50 bg-white">
                             {
                                 getControlItems.options &&
                                 getControlItems.options.length > 0 ?
