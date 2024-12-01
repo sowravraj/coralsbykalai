@@ -32,7 +32,8 @@ const AuthLogin = () => {
           // navigate("/shop/home");
         } else {
           toast({
-            title: data?.payload?.message,
+            title: "Login Failed",
+            description: "Invalid credentials or account not found",
             variant: "destructive", 
           });
         }
