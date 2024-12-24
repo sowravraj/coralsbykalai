@@ -80,28 +80,30 @@ const deleteProduct = async (req,res) => {
         const deletedProduct = await Products.findByIdAndDelete(id)
 
         if(!deletedProduct){
-            return res.status(401).json({
+            return res.status(404).json({
                 success: false,
                 message: "Product Not Found"
             })
         }
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             data:deletedProduct,
             message: "Product Deleted Successfully"
             })
     } catch (error) {
-        console.log(error);
-        res.json({
-            success:"false",
-            message:"Error occured While deleting Product"
-        })
+        console.error('Error occurred while deleting product:', error); // Log the full error object
+        res.status(500).json({
+            success: false,
+            message: "Error occurred while deleting product",
+            error: error.message, // Send the error message back (for debugging purposes)
+        });
+    
     }
 }
 
 //edit a product
 
-const editProduct = async (req,res) => {
+let editProduct = async (req,res) => {
     try {
         const {id} = req.params;
         const { image, title, description, category, brand, price, salePrice, totalStock  } = req.body;
@@ -117,8 +119,8 @@ const editProduct = async (req,res) => {
         findProduct.description = description || findProduct.description;
         findProduct.category = category || findProduct.category;
         findProduct.brand = brand || findProduct.brand;
-        findProduct.price = price || findProduct.price;
-        findProduct.salePrice = salePrice || findProduct.salePrice;
+        findProduct.price = price === "" ? 0 : price || findProduct.price;
+        findProduct.salePrice = salePrice === "" ? 0 : salePrice || findProduct.salePrice;
         findProduct.totalStock = totalStock || findProduct.totalStock;
         findProduct.image = image || findProduct.image;
         await findProduct.save();

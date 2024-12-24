@@ -36,6 +36,20 @@ export const loginUser = createAsyncThunk("/auth/login",
       }
     )
 
+    export const logoutUser = createAsyncThunk("/auth/logout",
+
+      async(formData, { rejectWithValue })=>{
+          try{
+          const response = await axios.post("http://localhost:3000/api/auth/logout",formData,{
+           withCredentials: true      }
+          )
+          return response.data}catch (error) {
+              // Use rejectWithValue to handle errors gracefully
+              return rejectWithValue(error.response?.data || "An error occurred");
+          }
+        }
+      )
+
     export const checkAuth = createAsyncThunk(
         "/auth/checkauth",
       

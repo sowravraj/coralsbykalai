@@ -28,13 +28,24 @@ const AuthLogin = () => {
           toast({
             title: "Login Success",
             description: "Welcome back!",
+            style: {
+              backgroundColor: "white",
+              color: "black", // Ensure the text color is visible
+              border: "1px solid #111111", // Optional: Add a subtle border
+            },
           });
+          
           // navigate("/shop/home");
         } else {
           toast({
             title: "Login Failed",
             description: "Invalid credentials or account not found",
-            variant: "destructive", 
+            style: {
+              backgroundColor: "white",
+              color: "black", // Ensure the text color is visible
+              border: "1px solid red", // Optional: Add a subtle border
+            },
+
           });
         }
           })

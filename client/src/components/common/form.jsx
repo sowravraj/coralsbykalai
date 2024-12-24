@@ -5,7 +5,7 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import "../../App.css"
 
-const Commonform = ({formControls,formData, setFormData, onSubmit,buttonText}) => {
+const Commonform = ({formControls,formData, setFormData, onSubmit,buttonText,isBtnDisabled}) => {
 
     const renderInputsByComponentType = (getControlItems)=>{
         let element = null
@@ -93,6 +93,7 @@ const Commonform = ({formControls,formData, setFormData, onSubmit,buttonText}) =
             }
         </div>
         <Button 
+            disabled={isBtnDisabled}
             type="submit" 
             className="mt-6 w-full bg-black rounded transition-all duration-300 ease-in-out transform group hover:bg-black hover:scale-105 hover:shadow-lg"
         >
