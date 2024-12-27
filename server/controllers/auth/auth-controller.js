@@ -72,6 +72,7 @@ const loginUser = async (req, res) => {
         id: checkUser._id,
         role: checkUser.role,
         email: checkUser.email,
+        userName : checkUser.username,
       },
       "SREE_AVANTHIGA",
       { expiresIn: "40m" }
@@ -84,6 +85,7 @@ const loginUser = async (req, res) => {
         id: checkUser._id,
         role: checkUser.role,
         email: checkUser.email,
+        userName : checkUser.username,
       },
     });
   } catch (error) {

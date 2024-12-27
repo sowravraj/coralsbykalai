@@ -37,18 +37,20 @@ export const loginUser = createAsyncThunk("/auth/login",
     )
 
     export const logoutUser = createAsyncThunk("/auth/logout",
-
-      async(formData, { rejectWithValue })=>{
-          try{
-          const response = await axios.post("http://localhost:3000/api/auth/logout",formData,{
-           withCredentials: true      }
-          )
-          return response.data}catch (error) {
-              // Use rejectWithValue to handle errors gracefully
+      async(_, { rejectWithValue }) => { // Note the use of `_` for unused argument
+          try {
+              const response = await axios.post(
+                  "http://localhost:3000/api/auth/logout",
+                  {}, // Body is empty if not needed
+                  { withCredentials: true } // Move this to the right place
+              );
+              return response.data;
+          } catch (error) {
               return rejectWithValue(error.response?.data || "An error occurred");
           }
-        }
-      )
+      }
+    );
+    
 
     export const checkAuth = createAsyncThunk(
         "/auth/checkauth",
@@ -97,6 +99,10 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.user = action.payload.success? action.payload.user: null ;
             state.isAuthenticated = action.payload.success? true: false;
+        }).addCase(logoutUser.fulfilled,(state,action)=>{
+          state.isLoading = false;
+          state.user =  null ;
+          state.isAuthenticated =false;
         }).addCase(loginUser.rejected,(state,action)=>{
             state.isLoading = false;
             state.user = null;
