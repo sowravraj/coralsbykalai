@@ -5,10 +5,10 @@ import { Card,CardContent, CardFooter } from "@/components/ui/card";
 // import { Card, CardFooter } from "../ui/card";
 
 
-const ShoppingProductTile = ({ product }) => {
+const ShoppingProductTile = ({ product,handleGetProductDetails  }) => {
   return (
     <Card className="w-full max-w-sm mx-auto">
-      <div className="relative">
+      <div className="relative" onClick={()=>handleGetProductDetails(product?._id)}>
         <img
           src={product?.image}
           alt={product?.title}
@@ -25,10 +25,10 @@ const ShoppingProductTile = ({ product }) => {
             <span className="text-sm text-muted-foreground capitalize">{product?.brand}</span>
         </div>
         <div className="flex justify-between items-center mb2">
-            <span className={`${product?.salePrice>0 ? "line-through":" "}text-lg text-primary font-semibold`}>${product?.price}</span>
+            <span className={`${product?.salePrice>0 ? "line-through":" "} text-lg text-primary font-semibold`}>₹{product?.price}</span>
             {
                product?.salePrice>0 ? 
-               <span className="text-lg text-primary font-semibold">${product?.salePrice}</span>
+               <span className="text-lg text-primary font-semibold">₹{product?.salePrice}</span>
                : null 
             }
 
