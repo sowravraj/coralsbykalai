@@ -2,7 +2,7 @@ const Cart = require("../../models/Cart")
 const Product = require("../../models/Products")
 
 
-const addToCart = async(req,res)=>{
+const addCartItems = async(req,res)=>{
     try {
         const {userId, productId, quantity} = req.body
         if ( !userId || !productId || quantity<=0 ) {
@@ -27,7 +27,7 @@ const addToCart = async(req,res)=>{
         const findCurrentProductIndex = cart.items.findIndex(item => item.productId.toString() === productId)
 
         if (findCurrentProductIndex === -1){
-            cart.items.push({quantity,prodcutId})
+            cart.items.push({quantity,productId})
         }else {
             cart.items[findCurrentProductIndex].quantity += quantity
         }
@@ -50,7 +50,7 @@ const addToCart = async(req,res)=>{
 
 const fetchCartItems = async(req,res)=>{
     try {
-        const {userId} = req.params
+        const {userId,} = req.params
         if (!userId){
             res.status(400).json({
                 success: true,
@@ -69,20 +69,23 @@ const fetchCartItems = async(req,res)=>{
             })
         }
 
-        const validItem = cart.items.filter(productItem => productItem.prodcutId)
-        if (validItem.length < cart.items.length){
-         cart.items = validItem
+       
+    const validItems = cart.items.filter(
+        (productItem) => productItem.productId
+      );
+        if (validItems.length < cart.items.length){
+         cart.items = validItems
          await cart.save()
         }
 
-        const populateCartItems = validItem.map(item=>({
-            productId : item.productId._id,
-            image : item.productId.image,
-            title : item.productId.title,
-            price : item.productId.price,
-            salePrice : item.productId.salePrice,
-            quantity : item.quantity
-        }))
+        const populateCartItems = validItems.map((item) => ({
+            productId: item.productId._id,
+            image: item.productId.image,
+            title: item.productId.title,
+            price: item.productId.price,
+            salePrice: item.productId.salePrice,
+            quantity: item.quantity,
+          }));
 
         res.status(200).json({
             success : true,
@@ -103,8 +106,8 @@ const fetchCartItems = async(req,res)=>{
 const UpdateCartItemQuantity = async(req,res)=>{
     try {
 
-        const { userId, prodcutId, quantity } = req.body;
-        if (!user || !prodcutId || !quantity) {
+        const { userId, productId, quantity } = req.body;
+        if (!user || !productId || !quantity) {
             res.status(400).json({
                 success: false,
                 message: "Invalid request"
@@ -119,7 +122,7 @@ const UpdateCartItemQuantity = async(req,res)=>{
                 })
                 }
 
-        const findCurrentProductIndex = cart.items.findIndex(item=>item.prodcutId.toString()===prodcutId)
+        const findCurrentProductIndex = cart.items.findIndex(item=>item.prodcutId.toString()===productId)
 
         if (findCurrentProductIndex === -1) {
             res.status(404).json({
@@ -136,11 +139,11 @@ const UpdateCartItemQuantity = async(req,res)=>{
         })
 
         const populateCartItems = cart.items.map(item=>({
-            productId : item.prodcutId? item.productId._id : null,
-            image : item.image? item.productId.image: null,
-            title : item.title? item.productId.title: "Product not Found",
-            price : item.price? item.productId.price: null,
-            salePrice : item.salePrice? item.productId.salePrice: null,
+            productId : item.productId? item.productId._id : null,
+            image : item.productId? item.productId.image: null,
+            title : item.productId? item.productId.title: "Product not Found",
+            price : item.productId? item.productId.price: null,
+            salePrice : item.productId? item.productId.salePrice: null,
             quantity : item.quantity
         }))
 
@@ -187,6 +190,28 @@ const deleteCartItems = async(req,res)=>{
         cart.items = cart.items.filter(item => item.prodcutId._id.toString() !== productId)
 
         await cart.save()
+
+        await cart.populate({
+            path : "items.productId",
+            select : "image title price salePrice"
+            })
+
+            const populateCartItems = cart.items.map(item=>({
+                productId : item.productId? item.productId._id : null,
+                image : item.productId? item.productId.image: null,
+                title : item.productId? item.productId.title: "Product not Found",
+                price : item.productId? item.productId.price: null,
+                salePrice : item.productId? item.productId.salePrice: null,
+                quantity : item.quantity
+            }))
+    
+            res.status(200).json({
+                success : true,
+                data : {
+                    ...cart._doc,
+                    items : populateCartItems
+            }})
+
     } catch (error) {
         console.log(error);
         res.status(500).json({
