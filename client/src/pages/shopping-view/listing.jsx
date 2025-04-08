@@ -16,9 +16,11 @@ import {
 import { ArrowUpDownIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ShoppingProductTile from "./Product-Tile";
+import ShoppingProductTile from "../../components/shopping-view/Product-Tile";
 import { useSearchParams } from "react-router-dom";
-import ProductDetailsDialog from "./product-details";
+import ProductDetailsDialog from "../../components/shopping-view/product-details";
+import { addToCart, fetchCartItems } from "@/store/shop/Cart-slice";
+import { useToast } from "@/hooks/use-toast";
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
@@ -41,6 +43,10 @@ const ShoppingListing = () => {
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog,setOpenDetailsDialog] = useState(false)
+  const {toast} = useToast();
+
+  const {user} = useSelector((state) => state.auth)
+
 
   const handleSort = (value) => {
     setSort(value);
@@ -108,11 +114,40 @@ const ShoppingListing = () => {
     console.log("ProductDetails", productDetails);
   }
 
+  function handleAddToCart(getCurrentProductid) {
+    // console.log("Adding to Cart:", {
+    //     userId: user?.id,
+    //     productId: getCurrentProductid,
+    //     quantity: 1,
+    // });
+
+    dispatch(addToCart({ userId: user?.id, productId: getCurrentProductid, quantity: 1 }))
+    .then((data) => {
+        console.log("Cart API Response:", data);  // Debug API response
+        if (data?.payload?.success) {
+            dispatch(fetchCartItems(user?.id));
+            toast({
+              title: "Product Added to Cart",
+              status: "success",
+              duration: 1500,
+              className: "bg-white text-black shadow-md border border-gray-200"
+            })
+        }
+    })
+    .catch(error => console.error("Cart API Error:", error.response?.data || error));
+
+}
+
+
   useEffect(()=>{
     if(productDetails !== null){
       return  setOpenDetailsDialog(true)
     }
   },[productDetails])
+
+    // console.log(cartItems, "cartItems");
+    
+
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
@@ -158,13 +193,15 @@ const ShoppingListing = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4 gap-4">
           {productList.map((productItem) => (
             <ShoppingProductTile
+            key={productItem._id}
               handleGetProductDetails={handleGetProductDetails}
               product={productItem}
+              handleAddToCart={handleAddToCart}
             />
           ))}
         </div>
       </div>
-      <ProductDetailsDialog open={openDetailsDialog} setOpen={setOpenDetailsDialog} productDetails={productDetails}/>
+      <ProductDetailsDialog open={openDetailsDialog} setOpen={setOpenDetailsDialog} productDetails={productDetails}  />
     </div>
   );
 };

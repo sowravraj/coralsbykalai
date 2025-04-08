@@ -3,11 +3,50 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { addToCart, fetchCartItems } from "@/store/shop/Cart-slice";
+import { setProductDetails } from "@/store/shop/Product-slice";
 import { StarIcon } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 
-function ProductDetailsDialog({ open, setOpen, productDetails }) {
+function ProductDetailsDialog({ open, setOpen, productDetails, }) {
+
+  const dispatch = useDispatch();
+  const {toast} = useToast();
+  const {user} = useSelector(state => state.auth)
+
+
+  function handleAddToCart(getCurrentProductid) {
+    // console.log("Adding to Cart:", {
+    //     userId: user?.id,
+    //     productId: getCurrentProductid,
+    //     quantity: 1,
+    // });
+
+    dispatch(addToCart({ userId: user?.id, productId: getCurrentProductid, quantity: 1 }))
+    .then((data) => {
+        console.log("Cart API Response:", data);  // Debug API response
+        if (data?.payload?.success) {
+            dispatch(fetchCartItems(user?.id));
+            toast({
+              title: "Product Added to Cart",
+              status: "success",
+              duration: 1500,
+              className: "bg-white text-black shadow-md border border-gray-200"
+            })
+        }
+    })
+    .catch(error => console.error("Cart API Error:", error.response?.data || error));
+
+}
+
+  function handleDialogClose(){
+    setOpen(false);
+    dispatch (setProductDetails())
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw] bg-white rounded-lg">
         <div className="relative overflow-hidden rounded-lg">
             <img
@@ -41,7 +80,9 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                     <span className="text-muted-foreground">(4.5)</span>
             </div>
             <div className="mt-4 mb-5">
-              <Button className="w-full bg-black text-white rounded hover:bg-white hover:text-black hover:border">Add to Cart</Button>
+              <Button 
+              onClick={()=>handleAddToCart(productDetails?._id)}
+              className="w-full bg-black text-white rounded hover:bg-white hover:text-black hover:border">Add to Cart</Button>
               
             </div>
             <Separator className="w-full border-t border-gray-200"/>

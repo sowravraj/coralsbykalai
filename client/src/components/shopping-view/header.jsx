@@ -1,5 +1,5 @@
 import { House, LogOut, LogOutIcon, Menu, ShoppingCart, UserCog } from 'lucide-react'
-import React, { } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
 import { Button } from '../ui/button'
@@ -8,6 +8,8 @@ import { shoppingViewHeaderMenuItems } from '@/config'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { logoutUser } from '@/store/auth-slice'
+import UserCartWrapper from './cart-wrapper'
+import { fetchCartItems } from '@/store/shop/Cart-slice'
 
 
  const MenuItems =()=>{
@@ -20,6 +22,10 @@ import { logoutUser } from '@/store/auth-slice'
 
 const HeaderRightContent =()=>{
   const {user} = useSelector(state=>state.auth)
+  // const {cartItems} = useSelector((state) => state.shopCart.cartItems)
+  const {cartItems} = useSelector((state) => state.shopCart)
+
+  const [openCartSheet, setOpenCartSheet] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -27,11 +33,21 @@ const HeaderRightContent =()=>{
     dispatch(logoutUser())
   }
 
+  useEffect(()=>{
+    dispatch(fetchCartItems(user?.id))
+  },[dispatch])
+
+  // console.log(cartItems,"cartItems");
+  
   return<div className='flex lg:items-center lg:flex-row flex-col gap-4'>
-    <Button >
-    <ShoppingCart size={46} strokeWidth={3}  />
-    <span className='sr-only'>User Cart</span>
-    </Button>
+    <Sheet open={openCartSheet} onOpenChange={()=>setOpenCartSheet(false)}>
+      <Button onClick={()=>setOpenCartSheet(true)}>
+      <ShoppingCart size={46} strokeWidth={3}  />
+      <span className='sr-only'>User Cart</span>
+      </Button>
+      <UserCartWrapper  cartItems={cartItems} />
+    </Sheet>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-black">
