@@ -7,7 +7,7 @@ import { Card,CardContent, CardFooter } from "@/components/ui/card";
 
 const ShoppingProductTile = ({ product,handleGetProductDetails ,handleAddToCart }) => {
   return (
-    <Card className="w-full max-w-sm mx-auto">
+    <Card className="w-full max-w-sm mx-auto flex flex-col h-full">
       <div className="relative" onClick={()=>handleGetProductDetails(product?._id)}>
         <img
           src={product?.image}
@@ -19,25 +19,25 @@ const ShoppingProductTile = ({ product,handleGetProductDetails ,handleAddToCart 
         )}
       </div>
       <CardContent className="p-4">
-        <h2 className="text-lg font-bold mb-2">{product?.title}</h2>
+        <h2 className="text font-bold mb-2">{product?.title}</h2>
         <div className="flex justify-between items-center mb2">
             <span className="text-sm text-muted-foreground capitalize">{product?.category}</span>
             <span className="text-sm text-muted-foreground capitalize">{product?.brand}</span>
         </div>
         <div className="flex justify-between items-center mb2">
-            <span className={`${product?.salePrice>0 ? "line-through":" "} text-lg text-primary font-semibold`}>₹{product?.price}</span>
+            <span className={`${product?.salePrice>0 ? "line-through":" "} text-md text-primary font-semibold`}>₹{product?.price}</span>
             {
                product?.salePrice>0 ? 
-               <span className="text-lg text-primary font-semibold">₹{product?.salePrice}</span>
+               <span className="text-md text-primary font-semibold">₹{product?.salePrice}</span>
                : null 
             }
 
             
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="left-0">
             <Button onClick={()=>handleAddToCart(product?._id)}
-            className="w-full bg-black text-gray-50 rounded hover:bg-white hover:text-black hover:border">
+            className="w-full  bg-black text-gray-50 rounded hover:bg-white hover:text-black hover:border">
                 Add to Cart
             </Button>
       </CardFooter>
